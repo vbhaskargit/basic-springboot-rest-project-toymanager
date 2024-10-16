@@ -4,125 +4,120 @@ package com.vb.sb.toymanager.bean;
  * Bean to represent a toy object
  */
 public class Toy implements Cloneable{
-    private String name;
-    private ToyType toyType;
-    private Double price;
+    private final String name;
+    private ToyType toyType = ToyType.OTHER;
+    private Double price = 0D;
 
     /**
      * Private constructor to ensure instance created using Creator
-     *
-     * @param name
-     * @param toyType
-     * @param price
      */
-    private Toy(String name, ToyType toyType, Double price) {
+    private Toy(String name) {
         this.name = name;
-        this.toyType = toyType;
-        this.price = price;
     }
 
     /**
      * static Builder method to create and return toy
      *
      * @param name
-     * @param toyType
-     * @param price
      * @return
      */
-    public static Toy build(String name, ToyType toyType, Double price){
+    public static Toy build(String name){
         if(name == null || name.isEmpty()){
             throw new IllegalArgumentException("No valid parameters for Toy creation");
         }
 
-        return new Toy(name,toyType,price);
+        return new Toy(name);
     }
 
     /**
-     * Overloaded static builder method
+     * Setter with enabling chaining
      *
-     * @param name
      * @param toyType
-     * @param price
      * @return
      */
-    public static Toy build(String name, String toyType, Double price){
-        ToyType type = null;
-        try{
-            type = ToyType.valueOf(toyType);
-        } catch(IllegalArgumentException ex){
-            type = ToyType.OTHER;
+    public Toy setToyType(ToyType toyType) {
+        if(toyType == null){
+            toyType = ToyType.OTHER;
         }
 
-        return build(name,type,price);
+        this.toyType = toyType;
+
+        return this;
     }
 
     /**
-     * Overloaded static builder method
+     * Setter with enabling chaining
      *
-     * @param name
      * @param toyType
      * @return
      */
-    public static Toy build(String name, ToyType toyType){
-        return build(name,toyType,0D);
+    public Toy setToyType(String toyType) {
+        if(toyType == null || toyType.isEmpty()){
+            return setToyType(ToyType.OTHER) ;
+        }
+
+        ToyType type = ToyType.fromName(toyType);
+        return setToyType(type) ;
     }
 
     /**
-     * Overloaded static builder method
+     * Setter with enabling chaining
      *
-     * @param name
-     * @param toyType
+     * @param iPrice
      * @return
      */
-    public static Toy build(String name, String toyType){
-        return build(name, toyType,0D);
-    }
+    public Toy setPrice(Double iPrice) {
+        if(iPrice == null) {
+            //reset old price too if any
+            iPrice = 0D;
+        }
 
-    /**
-     * Overloaded static builder method
-     *
-     * @param name
-     * @return
-     */
-    public static Toy build(String name){
-        return build(name, ToyType.OTHER,0D);
+        if(iPrice < 0D){
+            throw new IllegalArgumentException("No valid price value provided.");
+        }
+
+        this.price = iPrice;
+
+        return this;
     }
 
     @Override
     public Toy clone() {
-        return new Toy(this.name, this.toyType, this.price);
+        return new Toy(this.name)
+                .setToyType(this.toyType)
+                .setPrice(this.price);
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public ToyType getToyType() {
         return toyType;
-    }
-
-    public void setToyType(ToyType toyType) {
-        this.toyType = toyType;
     }
 
     public Double getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
-        this.price = price;
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == null || !(obj instanceof Toy)){
+            return false;
+        }
+
+        Toy other = (Toy) obj;
+        return this.name.equals(other.name)
+                && this.toyType.equals(other.toyType)
+                && this.price.equals(other.price);
     }
 
     @Override
     public String toString() {
         return "Toy{" +
                 "name='" + name + '\'' +
-                ", price=" + price +
                 ", toyType=" + toyType +
+                ", price=" + price +
                 '}';
     }
 }

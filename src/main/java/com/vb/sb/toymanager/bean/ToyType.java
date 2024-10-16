@@ -9,7 +9,7 @@ public enum ToyType {
     HUMAN_FIGURE("Human Figure"),
     NON_HUMAN_FIGURE("Non Human Figure"),
     ANIMAL_FIGURE("Animal Figure"),
-    ARMS("Arms"),
+    WEAPON("Weapon"),
     VIDEO_GAME("Video Game"),
     INDOOR("Indoor"),
     OUTDOOR_GAME_ARTICLE("Outdoor Game Item"),
@@ -29,5 +29,20 @@ public enum ToyType {
     @Override
     public String toString() {
         return name;
+    }
+
+    /**
+     * Get the corresponding ToyType for a given name
+     *
+     * @param name
+     * @return
+     */
+    public static ToyType fromName(String name) {
+        for (ToyType type : ToyType.values()) {
+            if (type.name.equalsIgnoreCase(name)) {
+                return type;
+            }
+        }
+        return OTHER; // or throw an exception if preferred
     }
 }

@@ -4,13 +4,12 @@ import com.vb.sb.toymanager.bean.Toy;
 import com.vb.sb.toymanager.bean.ToyType;
 import jakarta.annotation.PostConstruct;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-@Component
+@Service
 @Aspect
 public class ToyStorage {
     private final List<Toy> toys = new ArrayList<>();
@@ -20,7 +19,7 @@ public class ToyStorage {
      */
     @PostConstruct
     private void intializeStorage(){
-        addToy("Light Saber", ToyType.ARMS,10D);
+        addToy("Light Saber", ToyType.WEAPON,10D);
         addToy("Fighter Plane", ToyType.BLOCK,20D);
     }
 
@@ -41,7 +40,7 @@ public class ToyStorage {
      * @param price
      */
     public void addToy(String name, String type, Double price){
-        toys.add(Toy.build(name,type,price));
+        toys.add(Toy.build(name).setToyType(type).setPrice(price));
     }
 
     /**
@@ -51,7 +50,7 @@ public class ToyStorage {
      * @param price
      */
     public void addToy(String name, ToyType type, Double price){
-        toys.add(Toy.build(name,type,price));
+        toys.add(Toy.build(name).setToyType(type).setPrice(price));
     }
 
     /**
@@ -59,8 +58,15 @@ public class ToyStorage {
      * @return
      */
     public List<Toy> getAllToys(){
-        List<Toy> returnList = new ArrayList<>();
-        Collections.copy(returnList,toys);
+        List<Toy> returnList = new ArrayList<>(toys.size());
+        //Ensure the destination list is the same size
+        //returnList.addAll(Collections.nCopies(toys.size(), null));
+        //copy() only creates shallow copy
+        //Collections.copy(returnList,toys);
+        for (Toy toy : toys) {
+            returnList.add(toy.clone());
+        }
+
         return returnList;
     }
 
